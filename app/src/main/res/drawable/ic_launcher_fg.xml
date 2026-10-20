@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shield + key: ProxyGo ka apna icon -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M54,26 L76,34 L76,52 C76,66 66,77 54,82 C42,77 32,66 32,52 L32,34 Z" />
+    <path android:fillColor="#4A1FC4"
+        android:pathData="M54,40 A7,7 0 1,1 53.99,40 Z M51,52 L57,52 L57,68 L62,68 L62,72 L57,72 L57,74 L51,74 Z" />
+    <path android:fillColor="#4CF0D0"
+        android:pathData="M54,44 A3,3 0 1,1 53.99,44 Z" />
+</vector>

@@ -1,0 +1,43 @@
+{
+  "search_url": "https://www.google.com/search?q=",
+  "auto_connect": true,
+  "proxies": [
+    {"name": "United States 1", "country": "US", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "high", "premium": false},
+    {"name": "Germany 1", "country": "DE", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "high", "premium": false},
+    {"name": "Singapore 1", "country": "SG", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "medium", "premium": true}
+  ],
+  "quick_sites": [
+    {"name": "Facebook", "url": "https://m.facebook.com", "letter": "f", "color": "#1877F2"},
+    {"name": "Pinterest", "url": "https://www.pinterest.com", "letter": "P", "color": "#E60023"},
+    {"name": "Games", "url": "https://poki.com", "letter": "G", "color": "#7A5AF8"},
+    {"name": "Netflix", "url": "https://www.netflix.com", "letter": "N", "color": "#141414"},
+    {"name": "YouTube", "url": "https://m.youtube.com", "letter": "▶", "color": "#FF0000"},
+    {"name": "Quiz", "url": "https://www.sporcle.com", "letter": "?", "color": "#2EA44F"},
+    {"name": "Instagram", "url": "https://www.instagram.com", "letter": "◎", "color": "#E1306C"},
+    {"name": "Booking", "url": "https://www.booking.com", "letter": "B.", "color": "#003580"},
+    {"name": "X", "url": "https://x.com", "letter": "X", "color": "#000000"},
+    {"name": "WhatsApp", "url": "https://web.whatsapp.com", "letter": "W", "color": "#25D366"},
+    {"name": "Reddit", "url": "https://www.reddit.com", "letter": "r", "color": "#FF4500"}
+  ],
+  "adblock_hosts": ["doubleclick.net", "googlesyndication.com", "adservice.google.com", "popads.net", "propellerads.com", "adsterra.com", "exoclick.com", "juicyads.com", "trafficjunky.net"],
+  "ads": {
+    "enabled": true,
+    "network": "admob",
+    "interstitial_every": 2,
+    "app_open": true,
+    "admob": {
+      "app_open": "ca-app-pub-3940256099942544/9257395921",
+      "banner": "ca-app-pub-3940256099942544/9214589741",
+      "interstitial": "ca-app-pub-3940256099942544/1033173712",
+      "rewarded": "ca-app-pub-3940256099942544/5224354917"
+    },
+    "max": {
+      "app_open": "",
+      "banner": "",
+      "interstitial": "",
+      "rewarded": ""
+    }
+  },
+  "privacy_url": "",
+  "cross_promo": []
+}
