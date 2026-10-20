@@ -121,6 +121,7 @@ fun BrowserScreen(act: MainActivity) {
     var panel by remember { mutableStateOf(Panel.None) }
     var clearAsk by remember { mutableStateOf(false) }
     var finding by remember { mutableStateOf(false) }
+    val barFocus = LocalFocusManager.current
 
     BackHandler(enabled = panel != Panel.None || finding || !tab.isHome || b.customView != null) {
         when {
@@ -163,8 +164,8 @@ fun BrowserScreen(act: MainActivity) {
                 onFlag = { panel = Panel.None; act.go(Screen.Proxies) },
                 onTrash = { panel = Panel.None; clearAsk = true },
                 onNewTab = { panel = Panel.None; b.newTab() },
-                onMenu = { panel = if (panel == Panel.Menu) Panel.None else Panel.Menu },
-                onTabs = { panel = if (panel == Panel.Tabs) Panel.None else Panel.Tabs },
+                onMenu = { barFocus.clearFocus(force = true); panel = if (panel == Panel.Menu) Panel.None else Panel.Menu },
+                onTabs = { barFocus.clearFocus(force = true); panel = if (panel == Panel.Tabs) Panel.None else Panel.Tabs },
             )
         }
         b.customView?.let { v ->
@@ -227,7 +228,9 @@ private fun AddressBar(act: MainActivity, tab: Tab) {
 
     fun go(text: String) {
         if (text.isBlank()) return
-        act.browser.open(text); focus.clearFocus(); keyboard?.hide(); editing = false
+        act.browser.open(text); focus.clearFocus(force = true); keyboard?.hide(); editing = false
+        // Page khulte hi focus WebView ko, warna Android wapas address bar pe focus de deta hai
+        tab.webView.postDelayed({ tab.webView.requestFocus() }, 300)
         Ads.maybeInterstitial(act)
     }
 
