@@ -1,0 +1,6 @@
+Menu -> 756 1441
+Settings -> 945 990
+General -> 279 374
+Display -> 275 584
+Connect -> 893 401
+Close -> 848 1121
