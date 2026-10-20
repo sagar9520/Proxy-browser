@@ -147,7 +147,7 @@ fun BrowserScreen(act: MainActivity) {
                     Modifier.fillMaxSize().background(Color.Black.copy(alpha = .08f))
                         .clickable(remember { MutableInteractionSource() }, null) { panel = Panel.None },
                 )
-                Box(Modifier.align(Alignment.BottomCenter)) {
+                Column(Modifier.align(Alignment.BottomCenter)) {
                     AnimatedVisibility(panel == Panel.Menu, enter = slideInVertically { it } + fadeIn(), exit = slideOutVertically { it } + fadeOut()) {
                         MenuPanel(act, tab, close = { panel = Panel.None }, find = { finding = true })
                     }
