@@ -1,0 +1,47 @@
+launch
+wait 3
+shot splash
+wait 25
+shot start
+tap Close
+wait 2
+shot home
+tap Search or enter the address
+type facebook
+wait 3
+shot suggest
+key 66
+wait 12
+shot page
+tap Menu
+wait 2
+shot menu
+tap Settings
+wait 2
+shot settings
+tap General
+wait 1
+shot settings_general
+key 4
+tap Display
+wait 1
+shot settings_display
+key 4
+key 4
+wait 1
+tap Proxy servers
+wait 20
+shot proxylist
+tap Connect
+wait 3
+shot connect_tap
+tap Watch video
+wait 35
+shot after_ad
+key 4
+wait 15
+shot connected
+tap Close
+tap New tab
+wait 2
+shot newtab

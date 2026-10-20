@@ -145,6 +145,8 @@ object Ads {
         ad.show(activity)
     }
 
+    val rewardedAvailable get() = cfg.enabled && (if (useMax) mReward?.isReady == true else gReward != null)
+
     /** Reward mila to onReward, warna onFail (ad load nahi hua). */
     fun showRewarded(activity: Activity, onReward: () -> Unit, onFail: () -> Unit) {
         if (!cfg.enabled) { onReward(); return }

@@ -2,24 +2,99 @@
   "search_url": "https://www.google.com/search?q=",
   "auto_connect": true,
   "proxies": [
-    {"name": "United States 1", "country": "US", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "high", "premium": false},
-    {"name": "Germany 1", "country": "DE", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "high", "premium": false},
-    {"name": "Singapore 1", "country": "SG", "type": "http", "host": "", "port": 3128, "user": "", "pass": "", "quality": "medium", "premium": true}
+    {
+      "name": "United States 1",
+      "country": "US",
+      "type": "http",
+      "host": "",
+      "port": 3128,
+      "user": "",
+      "pass": "",
+      "quality": "high"
+    },
+    {
+      "name": "Germany 1",
+      "country": "DE",
+      "type": "http",
+      "host": "",
+      "port": 3128,
+      "user": "",
+      "pass": "",
+      "quality": "high"
+    },
+    {
+      "name": "Singapore 1",
+      "country": "SG",
+      "type": "http",
+      "host": "",
+      "port": 3128,
+      "user": "",
+      "pass": "",
+      "quality": "medium"
+    }
   ],
   "quick_sites": [
-    {"name": "Facebook", "url": "https://m.facebook.com", "letter": "f", "color": "#1877F2"},
-    {"name": "Pinterest", "url": "https://www.pinterest.com", "letter": "P", "color": "#E60023"},
-    {"name": "Games", "url": "https://poki.com", "letter": "G", "color": "#7A5AF8"},
-    {"name": "Netflix", "url": "https://www.netflix.com", "letter": "N", "color": "#141414"},
-    {"name": "YouTube", "url": "https://m.youtube.com", "letter": "▶", "color": "#FF0000"},
-    {"name": "Quiz", "url": "https://www.sporcle.com", "letter": "?", "color": "#2EA44F"},
-    {"name": "Instagram", "url": "https://www.instagram.com", "letter": "◎", "color": "#E1306C"},
-    {"name": "Booking", "url": "https://www.booking.com", "letter": "B.", "color": "#003580"},
-    {"name": "X", "url": "https://x.com", "letter": "X", "color": "#000000"},
-    {"name": "WhatsApp", "url": "https://web.whatsapp.com", "letter": "W", "color": "#25D366"},
-    {"name": "Reddit", "url": "https://www.reddit.com", "letter": "r", "color": "#FF4500"}
+    {
+      "name": "Facebook",
+      "url": "https://m.facebook.com"
+    },
+    {
+      "name": "Pinterest",
+      "url": "https://www.pinterest.com"
+    },
+    {
+      "name": "Games",
+      "url": "https://poki.com",
+      "icon": "https://www.google.com/s2/favicons?domain=poki.com&sz=128"
+    },
+    {
+      "name": "Netflix",
+      "url": "https://www.netflix.com"
+    },
+    {
+      "name": "TED",
+      "url": "https://www.ted.com"
+    },
+    {
+      "name": "Quiz",
+      "url": "https://www.sporcle.com"
+    },
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com"
+    },
+    {
+      "name": "Booking",
+      "url": "https://www.booking.com"
+    },
+    {
+      "name": "YouTube",
+      "url": "https://m.youtube.com"
+    },
+    {
+      "name": "X",
+      "url": "https://x.com"
+    },
+    {
+      "name": "Reddit",
+      "url": "https://www.reddit.com"
+    },
+    {
+      "name": "Wikipedia",
+      "url": "https://www.wikipedia.org"
+    }
   ],
-  "adblock_hosts": ["doubleclick.net", "googlesyndication.com", "adservice.google.com", "popads.net", "propellerads.com", "adsterra.com", "exoclick.com", "juicyads.com", "trafficjunky.net"],
+  "adblock_hosts": [
+    "doubleclick.net",
+    "googlesyndication.com",
+    "adservice.google.com",
+    "popads.net",
+    "propellerads.com",
+    "adsterra.com",
+    "exoclick.com",
+    "juicyads.com",
+    "trafficjunky.net"
+  ],
   "ads": {
     "enabled": true,
     "network": "admob",
@@ -39,5 +114,8 @@
     }
   },
   "privacy_url": "",
-  "cross_promo": []
+  "cross_promo": [],
+  "connect_ad": true,
+  "free_proxy_api": "https://proxylist.geonode.com/api/proxy-list?limit=150&page=1&sort_by=lastChecked&sort_type=desc&protocols=http%2Chttps",
+  "max_free_proxies": 25
 }

@@ -20,7 +20,12 @@ object Prefs {
     val incognito = mutableStateOf(false)
     val clearOnExit = mutableStateOf(false)
     val autoConnect = mutableStateOf(true)
-    val darkMode = mutableStateOf(false)
+    val searchSuggest = mutableStateOf(true)
+    val acceptCookies = mutableStateOf(true)
+    val wideViewport = mutableStateOf(true)
+    val overview = mutableStateOf(true)
+    val restoreTabs = mutableStateOf(false)
+    val textZoom = androidx.compose.runtime.mutableIntStateOf(100)
     val searchEngine = mutableStateOf("Google")
     val lastProxy = mutableStateOf("")
     val history = mutableStateListOf<PageEntry>()
@@ -41,7 +46,11 @@ object Prefs {
         adBlock.value = sp.getBoolean("adblock", true)
         clearOnExit.value = sp.getBoolean("clear_on_exit", false)
         autoConnect.value = sp.getBoolean("auto_connect", true)
-        darkMode.value = sp.getBoolean("dark", false)
+        searchSuggest.value = sp.getBoolean("suggest", true)
+        acceptCookies.value = sp.getBoolean("cookies", true)
+        wideViewport.value = sp.getBoolean("wide", true)
+        overview.value = sp.getBoolean("overview", true)
+        textZoom.intValue = sp.getInt("text_zoom", 100)
         searchEngine.value = sp.getString("engine", "Google")!!
         lastProxy.value = sp.getString("last_proxy", "")!!
         history.addAll(load("history"))
@@ -52,6 +61,8 @@ object Prefs {
         state.value = v
         sp.edit().putBoolean(key, v).apply()
     }
+
+    fun setTextZoom(v: Int) { textZoom.intValue = v; sp.edit().putInt("text_zoom", v).apply() }
 
     fun setEngine(name: String) { searchEngine.value = name; sp.edit().putString("engine", name).apply() }
     fun setLastProxy(id: String) { lastProxy.value = id; sp.edit().putString("last_proxy", id).apply() }
@@ -66,6 +77,8 @@ object Prefs {
         while (history.size > 300) history.removeAt(history.lastIndex)
         save("history", history)
     }
+
+    fun removeHistory(e: PageEntry) { history.remove(e); save("history", history) }
 
     fun clearHistory() { history.clear(); save("history", history) }
 

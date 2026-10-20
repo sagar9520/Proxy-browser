@@ -38,6 +38,13 @@ class Tab(val webView: WebView) {
 /** Saare tabs aur unke WebView. Activity ke saath zinda rehte hain (configChanges manifest me handle). */
 class BrowserState(private val ctx: Context) {
     val tabs = mutableStateListOf<Tab>()
+    /** Website ki video full-screen ho to yahan aati hai */
+    var customView by mutableStateOf<android.view.View?>(null)
+    private var customCallback: WebChromeClient.CustomViewCallback? = null
+    /** File upload (input type=file) ke liye Activity launcher */
+    var fileChooser: ((android.webkit.ValueCallback<Array<Uri>>) -> Unit)? = null
+
+    fun exitFullscreen() { customCallback?.onCustomViewHidden(); customView = null; customCallback = null }
     var currentIndex by mutableIntStateOf(0)
     val current: Tab get() = tabs[currentIndex]
 
@@ -97,8 +104,10 @@ class BrowserState(private val ctx: Context) {
         s.blockNetworkImage = Prefs.blockImages.value
         s.builtInZoomControls = true
         s.displayZoomControls = false
-        s.useWideViewPort = true
-        s.loadWithOverviewMode = Prefs.desktopMode.value
+        s.useWideViewPort = Prefs.wideViewport.value || Prefs.desktopMode.value
+        s.loadWithOverviewMode = Prefs.overview.value || Prefs.desktopMode.value
+        s.textZoom = Prefs.textZoom.intValue
+        CookieManager.getInstance().setAcceptCookie(Prefs.acceptCookies.value)
         s.userAgentString = if (Prefs.desktopMode.value) DESKTOP_UA else null
         s.mediaPlaybackRequiresUserGesture = true
         s.setSupportMultipleWindows(false)
@@ -146,6 +155,12 @@ class BrowserState(private val ctx: Context) {
         wv.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView, newProgress: Int) { tab.progress = newProgress }
             override fun onReceivedTitle(view: WebView, title: String?) { tab.title = title.orEmpty() }
+            override fun onShowCustomView(view: android.view.View, callback: CustomViewCallback) { customView = view; customCallback = callback }
+            override fun onHideCustomView() { customView = null; customCallback = null }
+            override fun onShowFileChooser(w: WebView, cb: android.webkit.ValueCallback<Array<Uri>>, p: FileChooserParams): Boolean {
+                val f = fileChooser ?: return false
+                f(cb); return true
+            }
         }
         wv.setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
             runCatching {

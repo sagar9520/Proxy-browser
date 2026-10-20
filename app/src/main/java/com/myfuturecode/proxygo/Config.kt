@@ -20,15 +20,24 @@ data class ProxyServer(
     val user: String,
     val pass: String,
     val quality: String,
-    val premium: Boolean,
+    val latency: Int = 0,
+    val fromApi: Boolean = false,
 ) {
     val id get() = "$host:$port"
-    val flag: String
-        get() = if (country.length == 2) country.uppercase().map { Character.toChars(0x1F1E6 + (it - 'A')) }
-            .joinToString("") { String(it) } else "🌐"
+    val flagUrl get() = flagUrl(country)
 }
 
-data class QuickSite(val name: String, val url: String, val letter: String, val color: String, val icon: String)
+/** Asli jhanda (PNG) — emoji flags kuch phones pe letters dikhte hain. */
+fun flagUrl(country: String) = "https://flagcdn.com/w80/${country.lowercase().ifBlank { "un" }}.png"
+
+fun countryName(code: String): String =
+    java.util.Locale("", code.uppercase()).displayCountry.ifBlank { code.uppercase() }
+
+data class QuickSite(val name: String, val url: String, val letter: String, val color: String, val icon: String) {
+    /** Icon na diya ho to site ka asli logo (favicon) */
+    val iconUrl: String
+        get() = icon.ifBlank { "https://www.google.com/s2/favicons?domain=${android.net.Uri.parse(url).host}&sz=128" }
+}
 
 data class AdUnits(val appOpen: String, val banner: String, val interstitial: String, val rewarded: String)
 
@@ -54,6 +63,9 @@ data class AppConfig(
     val ads: AdsConfig,
     val crossPromo: List<PromoApp>,
     val privacyUrl: String,
+    val connectAd: Boolean,
+    val freeProxyApi: String,
+    val maxFreeProxies: Int,
 )
 
 /**
@@ -111,7 +123,7 @@ object RemoteConfig {
                 ProxyServer(
                     it.optString("name"), it.optString("country"), it.optString("type", "http"),
                     it.optString("host"), it.optInt("port", 3128), it.optString("user"), it.optString("pass"),
-                    it.optString("quality", "medium"), it.optBoolean("premium", false),
+                    it.optString("quality", "medium"),
                 )
             }.filter { it.host.isNotBlank() },
             quickSites = o.optJSONArray("quick_sites").mapObj {
@@ -132,6 +144,9 @@ object RemoteConfig {
                     it.optString("icon"), it.optString("desc", it.optString("description")))
             },
             privacyUrl = o.optString("privacy_url"),
+            connectAd = o.optBoolean("connect_ad", true),
+            freeProxyApi = o.optString("free_proxy_api"),
+            maxFreeProxies = o.optInt("max_free_proxies", 25),
         )
     }
 }
