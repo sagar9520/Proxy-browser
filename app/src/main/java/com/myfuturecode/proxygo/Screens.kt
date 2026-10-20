@@ -104,7 +104,7 @@ fun SplashScreen(act: MainActivity, done: () -> Unit) {
                 while (ProxyManager.servers.none { (ProxyManager.pings[it.id] ?: 0) > 0 } && job.isActive) delay(250)
                 val target = ProxyManager.servers.firstOrNull { it.id == Prefs.lastProxy.value && (ProxyManager.pings[it.id] ?: 0) > 0 }
                     ?: ProxyManager.fastest()
-                if (target != null) ProxyManager.connect(target)
+                if (target != null) ProxyManager.connectBest(target, tries = 2)
             }
         } else delay(1500)
         withTimeoutOrNull(3000) { while (!Ads.appOpenReady) delay(200) }
@@ -154,12 +154,15 @@ fun ProxyListScreen(act: MainActivity) {
             if (ProxyManager.connected.value != null) {
                 kotlin.coroutines.suspendCoroutine { c -> ProxyManager.disconnect { c.resumeWith(Result.success(Unit)) } }
             }
-            val ok = ProxyManager.connect(s)
+            val got = if (ProxyManager.supported) ProxyManager.connectBest(s) else null
             loadingDlg = null
             when {
-                ok -> { act.browser.reloadAll(); act.connectedPopup = s; act.go(Screen.Browser) }
+                got != null -> {
+                    if (got.id != s.id) toast(act, "${s.name} was busy, connected to ${got.name}")
+                    act.browser.reloadAll(); act.connectedPopup = got; act.go(Screen.Browser)
+                }
                 !ProxyManager.supported -> toast(act, "Please update Android System WebView to use proxy")
-                else -> toast(act, "${s.name} is not responding, try another server")
+                else -> toast(act, "Servers are busy right now, tap refresh and try again")
             }
         }
     }

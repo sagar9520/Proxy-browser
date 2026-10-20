@@ -55,8 +55,12 @@ object ProxyManager {
             val own = cfg.proxies
             servers.clear(); servers.addAll(own)
             val free = runCatching { fetchFree(cfg.freeProxyApi) }.getOrDefault(emptyList())
-            val checked = verifyMany(free.take(cfg.maxFreeProxies * 3), cfg.maxFreeProxies)
-            servers.addAll(checked.sortedBy { pings[it.id] ?: 9999 })
+            // Jo server check me chal gaya wo turant list me (ping ke hisaab se sahi jagah), poori list ka intezaar nahi
+            verifyMany(free.take(cfg.maxFreeProxies * 4), cfg.maxFreeProxies) { s ->
+                val ms = pings[s.id] ?: 9999
+                val at = servers.indexOfFirst { it.fromApi && (pings[it.id] ?: 9999) > ms }.let { if (it < 0) servers.size else it }
+                servers.add(at, s)
+            }
             verifyMany(own, own.size)
         } finally {
             loading.value = false
@@ -89,18 +93,28 @@ object ProxyManager {
     }
 
     /** Parallel check; `want` chalne wale mil gaye to baaki chhod do. */
-    private suspend fun verifyMany(list: List<ProxyServer>, want: Int): List<ProxyServer> = coroutineScope {
-        val gate = Semaphore(12)
+    private suspend fun verifyMany(list: List<ProxyServer>, want: Int, onOk: (ProxyServer) -> Unit = {}): List<ProxyServer> = coroutineScope {
+        val gate = Semaphore(16)
         val ok = mutableListOf<ProxyServer>()
         list.map { s ->
             async {
                 gate.withPermit {
                     if (synchronized(ok) { ok.size } >= want) return@withPermit
-                    if (verify(s) != null) synchronized(ok) { ok.add(s) }
+                    if (verify(s) != null) {
+                        synchronized(ok) { ok.add(s) }
+                        withContext(Dispatchers.Main) { onOk(s) }
+                    }
                 }
             }
         }.awaitAll()
         ok
+    }
+
+    /** Ye server na chale to agla sabse tez wala try karo (free proxies aksar band ho jaate hain). */
+    suspend fun connectBest(first: ProxyServer?, tries: Int = 4): ProxyServer? {
+        val order = listOfNotNull(first) + servers.filter { it.id != first?.id && (pings[it.id] ?: 0) > 0 }.sortedBy { pings[it.id] }
+        for (s in order.take(tries)) if (connect(s)) return s
+        return null
     }
 
     /** Proxy ke through ek chhota HTTPS request. Chala to bahar dikhne wala IP, warna null. */
@@ -108,7 +122,7 @@ object ProxyManager {
         val t = System.nanoTime()
         val builder = http.newBuilder()
             .proxy(Proxy(if (s.type.startsWith("socks")) Proxy.Type.SOCKS else Proxy.Type.HTTP, InetSocketAddress(s.host, s.port)))
-            .connectTimeout(5, TimeUnit.SECONDS).readTimeout(6, TimeUnit.SECONDS).callTimeout(8, TimeUnit.SECONDS)
+            .connectTimeout(4, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS).callTimeout(7, TimeUnit.SECONDS)
         if (s.user.isNotBlank()) builder.proxyAuthenticator(Authenticator { _, r ->
             r.request.newBuilder().header("Proxy-Authorization", Credentials.basic(s.user, s.pass)).build()
         })
