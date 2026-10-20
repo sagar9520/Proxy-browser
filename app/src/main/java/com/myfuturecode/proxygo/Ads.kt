@@ -47,8 +47,11 @@ object Ads {
         private set
 
     private val cfg get() = RemoteConfig.current.ads
+    /** Sirf debug build ke emulator test me ads band (intent extra "ci_no_ads"). */
+    var ciNoAds = false
+    private val adsOn get() = cfg.enabled && !ciNoAds
     private val useMax get() = cfg.network == "max" && maxReady
-    private fun on(unit: String) = cfg.enabled && unit.isNotBlank()
+    private fun on(unit: String) = adsOn && unit.isNotBlank()
 
     // AdMob
     private var gInter: InterstitialAd? = null
@@ -76,7 +79,7 @@ object Ads {
     }
 
     fun preload(activity: Activity) {
-        if (!cfg.enabled) return
+        if (!adsOn) return
         if (useMax) preloadMax(activity) else preloadAdmob()
     }
 
@@ -111,7 +114,7 @@ object Ads {
 
     /** Splash aur app wapas khulne par. */
     fun showAppOpen(activity: Activity, done: () -> Unit) {
-        if (!cfg.enabled || !cfg.appOpen || showingFullScreen) { done(); return }
+        if (!adsOn || !cfg.appOpen || showingFullScreen) { done(); return }
         if (useMax) {
             val ad = mOpen
             if (ad?.isReady == true) { pendingMaxDone = done; showingFullScreen = true; ad.showAd() } else done()
@@ -132,7 +135,7 @@ object Ads {
     }
 
     fun showInterstitial(activity: Activity, done: () -> Unit = {}) {
-        if (!cfg.enabled) { done(); return }
+        if (!adsOn) { done(); return }
         if (useMax) {
             val ad = mInter
             if (ad?.isReady == true) { pendingMaxDone = done; showingFullScreen = true; ad.showAd() } else { ad?.loadAd(); done() }
@@ -145,11 +148,11 @@ object Ads {
         ad.show(activity)
     }
 
-    val rewardedAvailable get() = cfg.enabled && (if (useMax) mReward?.isReady == true else gReward != null)
+    val rewardedAvailable get() = adsOn && (if (useMax) mReward?.isReady == true else gReward != null)
 
     /** Reward mila to onReward, warna onFail (ad load nahi hua). */
     fun showRewarded(activity: Activity, onReward: () -> Unit, onFail: () -> Unit) {
-        if (!cfg.enabled) { onReward(); return }
+        if (!adsOn) { onReward(); return }
         if (useMax) {
             val ad = mReward
             if (ad?.isReady == true) {
@@ -213,7 +216,7 @@ object Ads {
     /** Banner (50dp) ya MREC (300x250). */
     @Composable
     fun Banner(modifier: Modifier = Modifier, mrec: Boolean = false) {
-        if (!cfg.enabled) return
+        if (!adsOn) return
         val width = LocalConfiguration.current.screenWidthDp
         if (useMax) {
             val id = cfg.max.banner

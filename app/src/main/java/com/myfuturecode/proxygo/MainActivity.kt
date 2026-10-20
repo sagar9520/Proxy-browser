@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (BuildConfig.DEBUG && intent?.getBooleanExtra("ci_no_ads", false) == true) Ads.ciNoAds = true
         // Safed status/nav bar par dark icons (phone dark mode me bhi)
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(AColor.TRANSPARENT, AColor.TRANSPARENT),
