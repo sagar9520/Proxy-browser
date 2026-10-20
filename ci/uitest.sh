@@ -43,7 +43,7 @@ while IFS= read -r -u 3 line || [ -n "$line" ]; do
     launch) adb shell am start -n "$PKG/.MainActivity" --ez ci_no_ads true >/dev/null 2>&1 ;;
     wait) sleep "$arg" ;;
     shot) n=$((n+1)); adb exec-out screencap -p > "out/$(printf %02d $n)_$arg.png" ;;
-    tap) if xy=$(find_node "$arg"); then adb shell input tap $xy; else
+    tap) if xy=$(find_node "$arg"); then echo "$arg -> $xy" >> out/taps.txt; adb shell input tap $xy; else
            { echo "(not found: $arg) screen texts:"; grep -oE '(text|content-desc)="[^"]+"' /tmp/ui.xml 2>/dev/null | head -25 || echo "  no ui dump"; } >> out/missing.txt; fi ;;
     tapxy) adb shell input tap $arg ;;
     type) adb shell input text "${arg// /%s}" ;;
