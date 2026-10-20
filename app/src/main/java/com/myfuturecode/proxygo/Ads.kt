@@ -68,7 +68,7 @@ object Ads {
         app = ctx.applicationContext
         MobileAds.initialize(app) {}
         if (BuildConfig.APPLOVIN_SDK_KEY.isNotBlank()) {
-            val init = AppLovinSdkInitializationConfiguration.builder(BuildConfig.APPLOVIN_SDK_KEY)
+            val init = AppLovinSdkInitializationConfiguration.builder(BuildConfig.APPLOVIN_SDK_KEY, app)
                 .setMediationProvider(AppLovinMediationProvider.MAX)
                 .build()
             AppLovinSdk.getInstance(app).initialize(init) { maxReady = true }
