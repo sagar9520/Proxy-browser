@@ -21,11 +21,14 @@ import sys, re, xml.etree.ElementTree as ET
 want = sys.argv[1]
 try: nodes = list(ET.parse('/tmp/ui.xml').iter('node'))
 except Exception: sys.exit(1)
+def box(n): return list(map(int, re.findall(r'\d+', n.get('bounds') or '[0,0][0,0]')))
 def c(n):
-    x1,y1,x2,y2 = map(int, re.findall(r'\d+', n.get('bounds')))
+    x1,y1,x2,y2 = box(n)
     return f"{(x1+x2)//2} {(y1+y2)//2}"
 for exact in (True, False):
     for n in nodes:
+        x1,y1,x2,y2 = box(n)
+        if x2 - x1 < 2 or y2 - y1 < 2: continue   # zero-size (merged/invisible) node skip
         for k in ('text','content-desc'):
             v = n.get(k) or ''
             if (v == want) if exact else (want.lower() in v.lower() and v):
