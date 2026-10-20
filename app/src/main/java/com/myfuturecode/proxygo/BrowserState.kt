@@ -118,6 +118,9 @@ class BrowserState(private val ctx: Context) {
         return RemoteConfig.current.adblockHosts.any { host == it || host.endsWith(".$it") }
     }
 
+    /** Proxy wala page fail hua (timeout wagairah) to MainActivity agla server try karta hai. */
+    var onProxyError: ((Tab) -> Unit)? = null
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun createTab(): Tab {
         val wv = WebView(ctx)
@@ -146,6 +149,13 @@ class BrowserState(private val ctx: Context) {
                 tab.canGoBack = view.canGoBack()
                 tab.canGoForward = view.canGoForward()
                 Prefs.addHistory(view.title.orEmpty(), url)
+            }
+
+            override fun onReceivedError(view: WebView, request: WebResourceRequest, error: android.webkit.WebResourceError) {
+                // Proxy laga hai aur poora page hi nahi khula: server shayad band ho gaya
+                if (!request.isForMainFrame || ProxyManager.connected.value == null) return
+                val bad = listOf(ERROR_TIMEOUT, ERROR_CONNECT, ERROR_PROXY_AUTHENTICATION, ERROR_HOST_LOOKUP, ERROR_IO)
+                if (error.errorCode in bad) onProxyError?.invoke(tab)
             }
 
             override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler, host: String?, realm: String?) {

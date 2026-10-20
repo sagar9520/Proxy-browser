@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 enum class Screen { Splash, Browser, Proxies, Settings, History, Bookmarks }
 
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
         browser = BrowserState(this)
         browser.fileChooser = { cb -> pendingFile?.onReceiveValue(null); pendingFile = cb; pickFile.launch("*/*") }
         pendingUrl = intent?.dataString
+        browser.onProxyError = { tab -> switchServer(tab) }
         setContent {
             ProxyGoTheme {
                 when (screen) {
@@ -62,6 +65,27 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         val url = intent.dataString ?: return
         if (screen == Screen.Splash) pendingUrl = url else { screen = Screen.Browser; browser.open(url) }
+    }
+
+    private var switching = false
+    private val switches = ArrayDeque<Long>()
+
+    /** Chalu server ne jawab dena band kar diya: use list se hatao, agla tez server lagao, page reload. */
+    private fun switchServer(tab: Tab) {
+        val dead = ProxyManager.connected.value ?: return
+        val now = System.currentTimeMillis()
+        while (switches.isNotEmpty() && now - switches.first() > 120_000) switches.removeFirst()
+        if (switching || switches.size >= 3) return
+        switching = true; switches.addLast(now)
+        lifecycleScope.launch {
+            ProxyManager.pings[dead.id] = -1
+            ProxyManager.servers.removeAll { it.id == dead.id }
+            toast(this@MainActivity, "${dead.name} is slow, switching server…")
+            val next = ProxyManager.connectBest(null, tries = 3)
+            switching = false
+            if (next != null) { toast(this@MainActivity, "Connected to ${next.name}"); tab.webView.reload() }
+            else ProxyManager.disconnect { toast(this@MainActivity, "No server reachable, browsing without proxy"); tab.webView.reload() }
+        }
     }
 
     fun go(s: Screen) {
