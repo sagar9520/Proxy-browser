@@ -29,7 +29,7 @@ shot settings_display
 key 4
 key 4
 wait 1
-tap Proxy servers
+tapxy 107 2137
 wait 12
 shot proxylist
 wait 25
@@ -46,7 +46,6 @@ type whatismyip
 key 66
 wait 12
 shot ip_page
-tap Close
-tap New tab
+tapxy 538 2137
 wait 2
 shot newtab

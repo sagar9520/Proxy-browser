@@ -140,6 +140,16 @@ class BrowserState(private val ctx: Context) {
             }
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+                // Free proxy IP pe Google captcha deta hai: wahi search Bing pe khol do
+                val u = Uri.parse(url)
+                if (u.host.orEmpty().contains("google.") && u.path.orEmpty().startsWith("/sorry")) {
+                    val q = u.getQueryParameter("continue")?.let { Uri.parse(it).getQueryParameter("q") }
+                    if (!q.isNullOrBlank()) {
+                        view.stopLoading()
+                        view.loadUrl(Prefs.engines.getValue("Bing") + Uri.encode(q))
+                        return
+                    }
+                }
                 tab.url = url
                 tab.progress = 5
             }
