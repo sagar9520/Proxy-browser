@@ -12,9 +12,9 @@ adb shell settings put global animator_duration_scale 0
 
 find_node() {  # $1 = text ya content-desc; center "x y" print karta hai
   rm -f /tmp/ui.xml
-  for i in 1 2 3; do
+  for i in 1 2 3 4 5 6; do
     adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1 && break
-    sleep 1
+    sleep 2
   done
   python3 - "$1" <<'PY'
 import sys, re, xml.etree.ElementTree as ET
