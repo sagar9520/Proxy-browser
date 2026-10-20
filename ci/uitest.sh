@@ -34,7 +34,7 @@ PY
 }
 
 n=0
-while IFS= read -r line || [ -n "$line" ]; do
+while IFS= read -r -u 3 line || [ -n "$line" ]; do
   [ -z "$line" ] && continue; case "$line" in \#*) continue;; esac
   cmd="${line%% *}"; arg="${line#* }"
   echo ">> $line"
@@ -52,7 +52,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   if adb logcat -d -b crash | grep -q "FATAL EXCEPTION"; then
     n=$((n+1)); adb exec-out screencap -p > "out/$(printf %02d $n)_CRASH.png"; break
   fi
-done < "$STEPS"
+done 3< "$STEPS"
 
 adb logcat -d -b crash > out/crash.txt
 adb logcat -d '*:E' | grep -i "$PKG\|AndroidRuntime\|chromium" | tail -300 > out/errors.txt
